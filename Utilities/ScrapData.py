@@ -51,11 +51,7 @@ def scrape_store_stocks_data():
     tickers=tickers['ticker']
 
     for ticker in tickers:
-        try:
-            data= pdr.get_data_yahoo(ticker, start_date, end_date)
-        except:
-            data= pdr.DataReader(ticker,'google', start_date, end_date)
-    
+        data= pdr.get_data_yahoo(ticker, start_date, end_date)
         data.reset_index(inplace=True)
         data_dict = data.to_dict("records")
         collection.insert_one({"index":ticker,"data":data_dict})
@@ -66,9 +62,11 @@ def get_stocks_data():
     client= MongoClient()
     database= client['portfolio_db']
     collection= database['stocks_data']
-    data_from_db = collection.find_one({"index":"GOOG"})
-    output_dataframe = pd.DataFrame(data_from_db["data"])
-    output_dataframe.set_index("Date",inplace=True)
-    print(output_dataframe)
-
-    return
+    # data_from_db = collection.find_one({"index":"GOOG"})
+    # output_dataframe = pd.DataFrame(data_from_db["data"])
+    # output_dataframe.set_index("Date",inplace=True)
+    output_dataframe= pd.DataFrame(collection.find({}))
+    # data= [i for i in output_dataframe['data']]
+    # print(data[0])
+    
+    return output_dataframe
