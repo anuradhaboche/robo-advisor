@@ -43,9 +43,9 @@ def split_data(ticker_stock_data):
 def convert_to_json(parameters):
     testset=parameters['testset'][['Date','Open','High','Low','Close','Adj Close','Volume', 'Predictions']]
     json_file= testset.to_json(orient='records', index=True, lines=True)
-    # print(json_file)
-    with open('prediction_data.json', 'w') as fp:
-        fp.write(json_file)
-    return 
+    # # print(json_file)
+    # with open('prediction_data.json', 'w') as fp:
+    #     fp.write(json_file)
+    return json_file
 
 
