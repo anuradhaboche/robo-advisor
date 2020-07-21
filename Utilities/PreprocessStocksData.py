@@ -25,11 +25,27 @@ def preprocess_ticker_data(ticker_stock_data):
 
 
 
+# def split_data(ticker_stock_data):
+#       ticker_stock_data.index= ticker_stock_data['Date']
+#       trainset, testset= train_test_split(ticker_stock_data, test_size=.4, random_state=1)
+#       parameters={'trainset': trainset,'testset': testset,'ticker_stock_data':ticker_stock_data}
+#       return parameters
+
 def split_data(ticker_stock_data):
       ticker_stock_data.index= ticker_stock_data['Date']
-      trainset, testset= train_test_split(ticker_stock_data, test_size=.4, random_state=1)
-      parameters={'trainset': trainset,'testset': testset,'ticker_stock_data':ticker_stock_data}
+      # trainset, testset= train_test_split(ticker_stock_data, test_size=.4, random_state=1)
+      trainset=ticker_stock_data.loc['2010-01-01':'2018-12-31']
+      testset= ticker_stock_data.loc['2019-01-01': '2019-12-31']
+      ticker_name= ticker_stock_data['Ticker'][0]
+      parameters={'trainset': trainset,'testset': testset,'ticker_stock_data':ticker_stock_data,'ticker_name':ticker_name}
       return parameters
 
+def convert_to_json(parameters):
+    testset=parameters['testset'][['Date','Open','High','Low','Close','Adj Close','Volume', 'Predictions']]
+    json_file= testset.to_json(orient='records', index=True, lines=True)
+    # print(json_file)
+    with open('prediction_data.json', 'w') as fp:
+        fp.write(json_file)
+    return 
 
 

@@ -6,15 +6,27 @@ from LinearRegressionModelling import *
 from KnnModelling import *
 from AutoArimaModelling import *
 from LSTMModelling import *
+from PlottingModels import *
+import json
+class JSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if hasattr(obj, 'to_json'):
+            return obj.to_json(orient='records')
+        return json.JSONEncoder.default(self, obj)
 
+pd.options.mode.chained_assignment = None
 ticker_stock_data= pd.DataFrame()
 parameters={}
 start= time.time()
 ticker_stock_data=fetch_data_from_db('GOOG')
 ticker_stock_data=preprocess_ticker_data(ticker_stock_data)
 parameters=split_data(ticker_stock_data)
-model_linearRegression(parameters)
-# model_knn(parameters)
-# model_autoArima(parameters)
-# model_LSTM(parameters)
+parameters=model_linearRegression(parameters)
+# parameters=model_knn(parameters)
+# parameters=model_autoArima(parameters)
+# parameters=model_LSTM(parameters)
+# current_price(parameters)
+# forecast_price(parameters)
+convert_to_json(parameters)
+
 print("\nTime to load data: {} seconds".format(time.time() - start))

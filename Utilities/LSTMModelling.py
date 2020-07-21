@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, LSTM
+
 def prepData(parameters):
   ticker_stock_data= parameters['ticker_stock_data']
   trainset= parameters['trainset']
@@ -34,6 +35,7 @@ def prepData(parameters):
   return splitData
 
 def model_LSTM(parameters):
+  ticker_name= parameters['ticker_name']
   splitData=prepData(parameters)
   x_train= splitData['x_train']
   y_train= splitData['y_train']
@@ -49,5 +51,8 @@ def model_LSTM(parameters):
   predictions = model.predict(X_test)
   lstm_predictions = scaler.inverse_transform(predictions)
   lstm_rms=np.sqrt(np.mean(np.power((test-lstm_predictions),2)))
-  print('RMS with LTSM',lstm_rms)
-  return
+  print(x_train)
+  print(y_train)
+  testset.loc[:,'Predictions']=lstm_predictions
+  parameters= {'testset':testset,'trainset':trainset, 'lstm_rms':lstm_rms,'ticker_name':ticker_name }
+  return parameters
