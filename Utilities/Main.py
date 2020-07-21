@@ -8,11 +8,6 @@ from AutoArimaModelling import *
 from LSTMModelling import *
 from PlottingModels import *
 import json
-class JSONEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if hasattr(obj, 'to_json'):
-            return obj.to_json(orient='records')
-        return json.JSONEncoder.default(self, obj)
 
 pd.options.mode.chained_assignment = None
 ticker_stock_data= pd.DataFrame()
