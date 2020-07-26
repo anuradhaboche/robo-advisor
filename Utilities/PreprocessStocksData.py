@@ -3,7 +3,7 @@ import numpy as np
 import sqlite3
 from  fastai.tabular import add_datepart
 from sklearn.model_selection import train_test_split
-
+import datetime
 
 def fetch_data_from_db(ticker):
     connection = sqlite3.connect('/Users/anuradha/Desktop/Database/portfolio_db.db')
@@ -17,35 +17,61 @@ def fetch_data_from_db(ticker):
 
 def preprocess_ticker_data(ticker_stock_data):
     ticker_stock_data['Date'] = pd.to_datetime(ticker_stock_data.Date,format='%Y-%m-%d')
-    add_datepart(ticker_stock_data, 'Date', drop=False)
-    ticker_stock_data.drop(labels='Elapsed', axis=1,inplace=True)
+    ticker_stock_data.sort_values(by='Date', inplace=True)
+    ticker_stock_data.index= ticker_stock_data['Date']
+    # ticker_stock_data.drop(columns=['Date'], inplace=True, axis=1)
+    # add_datepart(ticker_stock_data, 'Date', drop=False)
+    # ticker_stock_data.drop(labels='Elapsed', axis=1,inplace=True)
     ticker_stock_data.Close.fillna(method='ffill', inplace=True)
     ticker_stock_data['Adj Close'].fillna(method='ffill', inplace=True)
     return ticker_stock_data
 
-
-
-# def split_data(ticker_stock_data):
-#       ticker_stock_data.index= ticker_stock_data['Date']
-#       trainset, testset= train_test_split(ticker_stock_data, test_size=.4, random_state=1)
-#       parameters={'trainset': trainset,'testset': testset,'ticker_stock_data':ticker_stock_data}
-#       return parameters
-
 def split_data(ticker_stock_data):
       ticker_stock_data.index= ticker_stock_data['Date']
-      # trainset, testset= train_test_split(ticker_stock_data, test_size=.4, random_state=1)
-      trainset=ticker_stock_data.loc['2010-01-01':'2018-12-31']
-      testset= ticker_stock_data.loc['2019-01-01': '2019-12-31']
+      trainset=ticker_stock_data.loc['1990-01-01':'2010-12-31'][['Adj Close']]
+      devset=ticker_stock_data.loc['2011-01-01':'2015-12-31'][['Adj Close']]
+      testset= ticker_stock_data.loc['2016-01-01': '2019-12-31'][['Adj Close']]
       ticker_name= ticker_stock_data['Ticker'][0]
-      parameters={'trainset': trainset,'testset': testset,'ticker_stock_data':ticker_stock_data,'ticker_name':ticker_name}
+      train_dev= trainset.append(devset)
+      num_train= trainset.shape[0]; num_test= testset.shape[0]; num_dev= devset.shape[0]; num_train_dev= train_dev.shape[0]
+      parameters= {'ticker_stock_data':ticker_stock_data,'trainset':trainset,'testset':testset, 'devset':devset,'train_dev':train_dev,'num_train':num_train, 'num_test':num_test,'num_dev':num_dev, 'num_train_dev':num_train_dev,'ticker_name':ticker_name}
       return parameters
 
 def convert_to_json(parameters):
-    testset=parameters['testset'][['Date','Open','High','Low','Close','Adj Close','Volume', 'Predictions']]
-    json_file= testset.to_json(orient='records', index=True, lines=True)
+    index= parameters['testset'].index
+    testset=parameters['testset'][['Open','High','Low','Close','Adj Close','Volume', 'Predictions']]
+    testset.loc[:,'Date']= index
+    print('\ntestset.head()',testset.head())
+    json_file= testset.to_json(orient='records', index=True)
     # print(json_file)
     with open('prediction_data.json', 'w') as fp:
         fp.write(json_file)
-    return 
+    return json_file
 
+def get_x_y(data, N, offset):
+    x, y = [], []
+    for i in range(offset, len(data)):
+        x.append(data[i-N:i])
+        y.append(data[i])
+    x = np.array(x)
+    y = np.array(y)
+    return x, y
 
+def display_columns(ticker_stock_data):
+  display_parameters={}
+  ticker_stock_data.index= ticker_stock_data['Date']
+  data= ticker_stock_data[['Open','High','Low','Close','Adj Close','Volume']]
+  trainset=ticker_stock_data.loc['1990-01-01':'2010-12-31']
+  devset=ticker_stock_data.loc['2011-01-01':'2015-12-31']
+  testset= ticker_stock_data.loc['2016-01-01': '2019-12-31']
+
+#   trainset=ticker_stock_data.loc['2011-01-01':'2015-12-31']
+#   devset=ticker_stock_data.loc['2016-01-01': '2019-12-31']
+#   dates_2020= []
+#   for i in range(365):
+#       dates_2020.append(datetime.date(2020, 1, 1) + datetime.timedelta(i))
+#   testset= pd.DataFrame(index=dates_2020)
+#   print(testset.head())
+  ticker_name= ticker_stock_data['Ticker'][0]
+  display_parameters={'data':data,'trainset':trainset,'devset':devset,'testset':testset,'ticker_name':ticker_name}
+  return display_parameters

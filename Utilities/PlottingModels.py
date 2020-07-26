@@ -3,12 +3,9 @@ import numpy as np
 import plotly.graph_objects as go
 # from plotly.offline import init_notebook_mode, iplot
 
-def current_price(parameters):
-#   init_notebook_mode(connected=False)
-#   configure_plotly_browser_state()
-  trainset= parameters['trainset'][['Open','High','Low','Close','Adj Close','Volume']]
-  ticker_name= parameters['ticker_name']
-#   configure_plotly_browser_state()
+def current_price( display_parameters):
+  trainset= display_parameters['trainset'][['Open','High','Low','Close','Adj Close','Volume']]
+  ticker_name= display_parameters['ticker_name']
   trainset.sort_index(inplace=True, ascending=True)
   fig = go.Figure()
   fig.add_trace(go.Scatter(x=trainset.index, y=trainset.Open,
@@ -37,12 +34,12 @@ def current_price(parameters):
   fig.show()
   return
 
-def forecast_price(parameters):
-  testset= parameters['testset'][['Open','High','Low','Close','Adj Close','Volume', 'Predictions']]
+def forecast_price(display_parameters, prediction_list):
+  testset= display_parameters['testset'][['Open','High','Low','Close','Adj Close','Volume']]
+  testset.loc[:,'Predictions']= prediction_list
+  print('Testset with predictions:\n', testset.head())
   fig = go.Figure()
-#   configure_plotly_browser_state()
-  ticker_name= parameters['ticker_name']
-#   init_notebook_mode(connected=False)
+  ticker_name= display_parameters['ticker_name']
   testset.sort_index(inplace=True, ascending=True)
   fig.add_trace(go.Scatter(x=testset.index, y=testset.Predictions,
                       mode='lines',
@@ -59,7 +56,8 @@ def forecast_price(parameters):
       )
   )
   fig.show()
-  return
+  display_parameters={'testset':testset,'ticker_name':ticker_name}
+  return display_parameters
 
 # def configure_plotly_browser_state():
 #   import IPython
