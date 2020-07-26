@@ -31,8 +31,9 @@ def disp(num):
 @app.route('/predict/<string:ticker>', methods = ['GET']) 
 def disp1(ticker): 
 	json = prediction(ticker)
-	print(json)
-	return jsonify({'data': json}) 
+	print(ticker)
+	#print(json)
+	return jsonify({'data': 'abc'}) 
 
 # driver function 
 if __name__ == '__main__': 

@@ -25,8 +25,8 @@ def execute_linear_model(parameters):
   testset=parameters['testset']
   prediction_list=train_test_linear_model(parameters['ticker_stock_data'],N_opt, parameters['num_train']+parameters['num_dev'])
   testset.loc[:, 'pred_N3']=prediction_list
-  print('RMSE=%0.3f'%math.sqrt(mean_squared_error(prediction_list, testset['Adj Close'])))
-  print("R2 = %0.3f" % r2_score(testset['Adj Close'], prediction_list))
+  #print('RMSE=%0.3f'%math.sqrt(mean_squared_error(prediction_list, testset['Adj Close'])))
+  #print("R2 = %0.3f" % r2_score(testset['Adj Close'], prediction_list))
   return prediction_list
 
 

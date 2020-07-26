@@ -37,7 +37,7 @@ def current_price( display_parameters):
 def forecast_price(display_parameters, prediction_list):
   testset= display_parameters['testset'][['Open','High','Low','Close','Adj Close','Volume']]
   testset.loc[:,'Predictions']= prediction_list
-  print('Testset with predictions:\n', testset.head())
+  #print('Testset with predictions:\n', testset.head())
   fig = go.Figure()
   ticker_name= display_parameters['ticker_name']
   testset.sort_index(inplace=True, ascending=True)
@@ -57,6 +57,7 @@ def forecast_price(display_parameters, prediction_list):
   )
   fig.show()
   display_parameters={'testset':testset,'ticker_name':ticker_name}
+  print("PlottingModels: ticker:",ticker_name)
   return display_parameters
 
 # def configure_plotly_browser_state():
