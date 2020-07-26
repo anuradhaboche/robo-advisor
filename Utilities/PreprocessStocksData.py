@@ -41,7 +41,7 @@ def convert_to_json(parameters):
     index= parameters['testset'].index
     testset=parameters['testset'][['Open','High','Low','Close','Adj Close','Volume', 'Predictions']]
     testset.loc[:,'Date']= index
-    print('\ntestset.head()',testset.head())
+    #print('\ntestset.head()',testset.head())
     json_file= testset.to_json(orient='records', index=True)
     # print(json_file)
     with open('prediction_data.json', 'w') as fp:
