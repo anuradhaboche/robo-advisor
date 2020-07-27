@@ -1,0 +1,5 @@
+fastai==1.0.61
+Flask-RESTful==0.3.8
+scikit-learn==0.22.1
+yfinance==0.1.54
+Keras== 2.3.1

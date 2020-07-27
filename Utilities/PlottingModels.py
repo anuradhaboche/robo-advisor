@@ -31,7 +31,7 @@ def current_price( display_parameters):
           font_family="Rockwell"
       )
   )
-  fig.show()
+  # fig.show()
   return
 
 def forecast_price(display_parameters, prediction_list):
@@ -55,7 +55,7 @@ def forecast_price(display_parameters, prediction_list):
           font_family="Rockwell"
       )
   )
-  fig.show()
+  # fig.show()
   display_parameters={'testset':testset,'ticker_name':ticker_name}
   print("PlottingModels: ticker:",ticker_name)
   return display_parameters
