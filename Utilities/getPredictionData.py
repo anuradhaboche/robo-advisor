@@ -49,4 +49,3 @@ def call_prediction(ticker):
 if __name__ == '__main__': 
 
 	app.run(debug = True) 
-
